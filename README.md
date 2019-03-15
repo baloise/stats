@@ -1,2 +1,2 @@
 # stats
-statistics TBD
+statistics TBD.

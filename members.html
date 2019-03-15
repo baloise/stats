@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+<script
+	src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script
+	src="https://momentjs.com/downloads/moment.min.js"></script>
+<style type="text/css">
+svg.ct-chart-bar, svg.ct-chart-line {
+	overflow: visible;
+}
+
+.ct-label.ct-label.ct-horizontal.ct-end {
+	position: relative;
+	justify-content: flex-end;
+	text-align: right;
+	transform-origin: 100% 0;
+	transform: translate(-100%) rotate(-45deg);
+	white-space: nowrap;
+}
+</style>
+</head>
+<body>
+	<div class="ct-chart ct-perfect-fourth"></div>
+	<script type="text/javascript">
+		var data = 
+{
+	series: [
+		    {
+		      name: 'contributors',
+		      data: [
+				  {x: new Date(1552576830295), y: 44}
+		    	  //LASTCONTRIB44LASTCONTRIB
+		      ]
+		    },
+		    {
+			      name: 'members',
+			      data: [
+			      {x: new Date(1552576830295), y: 67}
+				  //LASTMEMB67LASTMEMB
+			      ]
+			    }
+		  ]
+}
+			
+
+		var options = {
+			series: {
+			    'contributors': {
+			      //lineSmooth: Chartist.Interpolation.step()
+			    }
+			  },
+			axisY : {
+				onlyInteger : true
+			},
+			axisX : {
+				type : Chartist.FixedScaleAxis,
+				divisor : 15,
+				labelInterpolationFnc : function(value) {
+					return moment(value).format('MMM YY');
+				}
+			}
+		};
+
+		new Chartist.Line('.ct-chart', data, options);
+	</script>
+</body>
+
+</html>
+<!--CONTRIBUTORSDalchi,DennisBannerman,Gagne87,Ginious,MarkusTiede,MicBag,MrCode97,NoraKurzbein,StephanSST,Tiliavir,WolfgangWo,abrjak,bsolar17,christiansiegel,culmat,danielgrob,eliareutlinger,eloy83,greg-junkietech,harry08,hhenkel,joachimprinzbach,jochenpilger,jordilaforge,kullmanp,leubedane,luechtdiode,m4rc0z,marcellobellini,mfredenhagen,michelpfirter,mkaiser30,netzwerg,niiku,patrit,r3dDoX,renat1sakenov,sauterl,schlijo,seejaybee,svene,tommuelli,trichie,yannickholzenkampCONTRIBUTORS-->

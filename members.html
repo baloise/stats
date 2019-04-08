@@ -8,6 +8,7 @@
 <script
 	src="https://momentjs.com/downloads/moment.min.js"></script>
 <style type="text/css">
+
 svg.ct-chart-bar, svg.ct-chart-line {
 	overflow: visible;
 }
@@ -20,10 +21,27 @@ svg.ct-chart-bar, svg.ct-chart-line {
 	transform: translate(-100%) rotate(-45deg);
 	white-space: nowrap;
 }
+.ct-series-b,
+.ct-series-b .ct-line,
+.ct-series-b .ct-point {
+  stroke: darkblue;
+  color: darkblue;
+}
+
+.ct-series-a,
+.ct-series-a .ct-line,
+.ct-series-a .ct-point {
+  stroke: green;
+  color: green;
+}
+
 </style>
 </head>
 <body>
-	<div class="ct-chart ct-perfect-fourth"></div>
+	<div class="ct-chart ct-perfect-fourth" ></div>
+	<span class="ct-series-b" style="padding-left: 37%"><b>members</b></span>
+	<span class="ct-series-a" style="padding-left: 20px"><b>contributors</b></span>
+	
 	<script type="text/javascript">
 		var data = 
 {

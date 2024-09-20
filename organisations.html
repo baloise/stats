@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Organizations</title>
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            display: block; /* Change display to block for vertical layout */
+            vertical-align: top; /* Align text vertically to the top */
+        }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            vertical-align: middle; /* Align avatar image vertically to the middle */
+            cursor: pointer; /* Add cursor pointer for hover effect */
+        }
+        #popup {
+            display: none;
+            position: absolute;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            z-index: 9999; /* Ensure popup is above other content */
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="searchInput" value="Baloise">
+    <button onclick="searchOrganizations()">Search</button>
+    <div id="orgList"></div>
+
+    <div id="popup"></div>
+
+    <script>
+        function searchOrganizations() {
+            const searchTerm = document.getElementById('searchInput').value;
+            const searchUrl = `https://api.github.com/search/users?q=${searchTerm}-+in:login+type:org&per_page=100`;
+
+            fetch(searchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const orgList = document.getElementById('orgList');
+                    orgList.innerHTML = ''; // Clear existing list
+                    data.items.forEach(org => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        const avatar = document.createElement('img');
+                        avatar.src = org.avatar_url;
+                        avatar.className = 'avatar';
+                        avatar.addEventListener('mouseover', (e) => showPopup(org,e));
+                        avatar.addEventListener('mouseout', (e) => hidePopup(e));
+                        const nameLink = document.createElement('a');
+                        nameLink.href = org.html_url;
+                        nameLink.textContent = org.login;
+                        card.appendChild(avatar);
+                        card.appendChild(nameLink);
+                        orgList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function showPopup(org,event) {
+            if(!org.details) {
+                org.loading = true;
+                fetch(org.url)
+                .then(response => response.json())
+                .then(data => {
+                    org.details = data;
+                    showPopup(org,event);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+                return;
+            }
+            if(org.loading) {
+                return;
+            }
+            const popup = document.getElementById('popup');
+            let popupContent = '';
+            if (org.details.name) {
+                popupContent += `<p>Name: ${org.details.name}</p>`;
+            }
+            if (org.details.location) {
+                popupContent += `<p>Location: ${org.details.location}</p>`;
+            }
+            if (org.details.bio) {
+                popupContent += `<p>Bio: ${org.details.bio}</p>`;
+            }
+            if (org.details.created_at) {
+                popupContent += `<p>Created At: ${org.details.created_at}</p>`;
+            }
+            if (org.details.updated_at) {
+                popupContent += `<p>Updated At: ${org.details.updated_at}</p>`;
+            }
+            popup.innerHTML = popupContent;
+            popup.style.display = 'block';
+            popup.style.left = `${event.clientX+20}px`;
+            popup.style.top = `${event.clientY+20}px`;
+        }
+
+        function hidePopup(event) {
+            const popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+
+        // Initial load
+        searchOrganizations();
+    </script>
+</body>
+</html>

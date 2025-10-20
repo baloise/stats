@@ -28,6 +28,27 @@
 		<div class="footer">Stats loaded live from <a href="https://api.github.com/orgs/baloise" target="_blank">GitHub API</a>.<br>Source: <a href="https://github.com/baloise" target="_blank">github.com/baloise</a></div>
 	</div>
 	<script>
+
+	// Generic function to count paginated results from a GitHub API endpoint
+	async function countPaginatedResults(apiUrl) {
+		try {
+			const res = await fetch(apiUrl + '?per_page=1');
+			// Check for pagination in the Link header
+			const link = res.headers.get('link');
+			if (link) {
+				const match = link.match(/&page=(\d+)>; rel="last"/);
+				if (match && match[1]) {
+					return parseInt(match[1], 10);
+				}
+			}
+			// Fallback: count array length (if only a few results)
+			const arr = await res.json();
+			return Array.isArray(arr) ? arr.length : 0;
+		} catch (e) {
+			return null;
+		}
+	}
+
 	async function fetchOrgStats() {
 		try {
 			const orgRes = await fetch('https://api.github.com/orgs/baloise');
@@ -48,16 +69,8 @@
 			document.getElementById('website-value').textContent = 'Error';
 		}
 		try {
-			// GitHub API: /orgs/{org}/public_members returns an array of users
-			const membersRes = await fetch('https://api.github.com/orgs/baloise/public_members?per_page=1');
-			let total = membersRes.headers.get('link')?.match(/&page=(\d+)>; rel="last"/);
-			if (total && total[1]) {
-				document.getElementById('members-value').textContent = parseInt(total[1], 10);
-			} else {
-				// fallback: count array length (if only a few members)
-				const arr = await membersRes.json();
-				document.getElementById('members-value').textContent = arr.length;
-			}
+			const count = await countPaginatedResults('https://api.github.com/orgs/baloise/public_members');
+			document.getElementById('members-value').textContent = (count !== null) ? count : 'Error';
 		} catch (e) {
 			document.getElementById('members-value').textContent = 'Error';
 		}

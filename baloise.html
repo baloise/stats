@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Baloise GitHub Organisation Stats</title>
+	<style>
+		body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #222; }
+		.container { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 2em; max-width: 500px; margin: auto; }
+		h1 { color: #005587; }
+		.stat { margin: 1em 0; font-size: 1.2em; }
+		.label { font-weight: bold; }
+		.footer { margin-top: 2em; color: #888; font-size: 0.9em; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Baloise GitHub Organisation</h1>
+		<div class="stat"> <span class="label">Organisation:</span> <a href="https://github.com/baloise" target="_blank">baloise</a></div>
+		<div class="stat"> <span class="label">Created:</span> <span id="created-value">Loading...</span></div>
+		<div class="stat"> <span class="label">Number of public members:</span> <span id="members-value">Loading...</span></div>
+		<div class="stat"> <span class="label">Number of public repositories:</span> <span id="repos-value">Loading...</span></div>
+		<div class="stat"> <span class="label">Location:</span> <span id="location-value">Loading...</span></div>
+		<div class="stat"> <span class="label">Website:</span> <span id="website-value">Loading...</span></div>
+		<div class="footer">Stats loaded live from <a href="https://api.github.com/orgs/baloise" target="_blank">GitHub API</a>.<br>Source: <a href="https://github.com/baloise" target="_blank">github.com/baloise</a></div>
+	</div>
+	<script>
+	async function fetchOrgStats() {
+		try {
+			const orgRes = await fetch('https://api.github.com/orgs/baloise');
+			const org = await orgRes.json();
+			document.getElementById('created-value').textContent = org.created_at ? org.created_at.substring(0, 10) : 'N/A';
+			document.getElementById('repos-value').textContent = org.public_repos ?? 'N/A';
+			document.getElementById('location-value').textContent = org.location || 'N/A';
+			document.getElementById('website-value').innerHTML = org.blog ? `<a href="${org.blog}" target="_blank">${org.blog}</a>` : 'N/A';
+		} catch (e) {
+			document.getElementById('created-value').textContent = 'Error';
+			document.getElementById('repos-value').textContent = 'Error';
+			document.getElementById('location-value').textContent = 'Error';
+			document.getElementById('website-value').textContent = 'Error';
+		}
+		try {
+			// GitHub API: /orgs/{org}/public_members returns an array of users
+			const membersRes = await fetch('https://api.github.com/orgs/baloise/public_members?per_page=1');
+			let total = membersRes.headers.get('link')?.match(/&page=(\d+)>; rel="last"/);
+			if (total && total[1]) {
+				document.getElementById('members-value').textContent = parseInt(total[1], 10);
+			} else {
+				// fallback: count array length (if only a few members)
+				const arr = await membersRes.json();
+				document.getElementById('members-value').textContent = arr.length;
+			}
+		} catch (e) {
+			document.getElementById('members-value').textContent = 'Error';
+		}
+	}
+	fetchOrgStats();
+	</script>
+</body>
+</html>

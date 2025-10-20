@@ -15,6 +15,9 @@
 </head>
 <body>
 	<div class="container">
+		<div style="text-align:center;">
+			<img id="org-avatar" src="" alt="Baloise Avatar" style="width:96px;height:96px;border-radius:50%;margin-bottom:1em;display:none;" />
+		</div>
 		<h1>Baloise GitHub Organisation</h1>
 		<div class="stat"> <span class="label">Organisation:</span> <a href="https://github.com/baloise" target="_blank">baloise</a></div>
 		<div class="stat"> <span class="label">Created:</span> <span id="created-value">Loading...</span></div>
@@ -33,6 +36,11 @@
 			document.getElementById('repos-value').textContent = org.public_repos ?? 'N/A';
 			document.getElementById('location-value').textContent = org.location || 'N/A';
 			document.getElementById('website-value').innerHTML = org.blog ? `<a href="${org.blog}" target="_blank">${org.blog}</a>` : 'N/A';
+			if (org.avatar_url) {
+				const avatar = document.getElementById('org-avatar');
+				avatar.src = org.avatar_url;
+				avatar.style.display = 'inline-block';
+			}
 		} catch (e) {
 			document.getElementById('created-value').textContent = 'Error';
 			document.getElementById('repos-value').textContent = 'Error';
